@@ -1,0 +1,8 @@
+from django.forms import ModelForm #"Kind of like a class-based representation of a form" - does some of the work for ya
+from .models import Room
+
+
+class RoomForm(ModelForm):
+    class Meta:
+        model = Room
+        fields = '__all__' # create all fields that are specified in the Room model (except for fields that aren't possible to update/change manually, eg. updated/changed)
