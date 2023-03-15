@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Room
 from .forms import RoomForm
 '''
@@ -27,5 +27,10 @@ def room(request, pk):
 
 def createRoom(request):
     form = RoomForm()
+    if request.method == 'POST': 
+        form = RoomForm(request.POST) # since we use ModelForm for RoomForm (in .forms), we can just pass in all the POST data into the form, and it will know which values to extract
+        if form.is_valid():
+            form.save()
+            return redirect('home') #redirects user to homepage after submitting form
     context = {'form': form}
     return render(request, 'base/room_form.html', context)

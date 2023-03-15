@@ -5,7 +5,7 @@
 <div>
     <form method="POST" action="" >
         {% csrf_token %} <!--inside of overy form in Django (if you use this templating engine), you need to add in this token. It will be sent on every form submitted(?) -helps with security attacks and compromise of data)-->
-        {{form}}
+        {{form.as_p}} <!--easy way to make the form prettier(cheat for structure basically)-->
         <input type="submit" value="Submit"/> <!--add submit button-->
     </form>
 </div>
