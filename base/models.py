@@ -17,6 +17,7 @@ class Room(models.Model):
     topic = models.ForeignKey(Topic, on_delete=models.SET_NULL, null=True) #ForeignKey establishes a parent-child relationship with Topic. Need to allow null=True in the db bc of SET_NULL 
     name = models.CharField(max_length=200)
     description = models.TextField(null=True, blank=True) # null=True doesn't actually do much as explained here: https://stackoverflow.com/questions/8609192/what-is-the-difference-between-null-true-and-blank-true-in-django
+                                                        #blank=True -> you can leavve fields blank (not required to fill out)
     #participants = 
     updated = models.DateTimeField(auto_now=True) #auto_now takes a snapshot everytime the instance is saved _ Eg. when the room was last updated
     created = models.DateTimeField(auto_now_add=True) #only takes a timestamp when the instance is created - Eg. when the room was created
