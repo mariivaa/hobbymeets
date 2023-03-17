@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Room
+from .models import Room, Topic
 from .forms import RoomForm
 '''
 REQUESTS explained: When a page is requested, Django creates an HttpRequest object that contains metadata about the request. 
@@ -17,7 +17,10 @@ rooms = [
 
 def home(request):
     rooms = Room.objects.all()
-    context = {'rooms': rooms}
+
+    topics = Topic.objects.all()
+
+    context = {'rooms': rooms, 'topics': topics}
     return render(request, 'base/home.html', context)
 
 def room(request, pk):
