@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.db.models import Q #lets you add AND/OR statements into the search criteria
 from .models import Room, Topic
 from .forms import RoomForm
 '''
@@ -16,11 +17,18 @@ rooms = [
 '''
 
 def home(request):
-    rooms = Room.objects.all()
+    q = request.GET.get('q') if request.GET.get('q') != None else '' #q for query hehe. q returs whatever is passed into the url. youtube: 2:13:40 for more
+    
+    rooms = Room.objects.filter( #filter() w/out parameters works just like all()
+        Q(topic__name__icontains=q) | #icontains is for the search functionality, makes it possible to search for partial matches (i makes it case insensitive)
+        Q(name__icontains=q) | #topic__name, name, description are all keywords of filter, not of Room model. topic__name is a composite keyword that goes into the parent function   
+        Q(description__icontains=q)
+        )  
 
     topics = Topic.objects.all()
+    room_count = rooms.count() #faster than len() method
 
-    context = {'rooms': rooms, 'topics': topics}
+    context = {'rooms': rooms, 'topics': topics, 'room_count': room_count}
     return render(request, 'base/home.html', context)
 
 def room(request, pk):

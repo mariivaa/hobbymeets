@@ -2,4 +2,9 @@
     <h1>LOGO</h1>
 </a>
 
+
+<form method="GET" action="{% url 'home' %}"> <!--the default method is GET, but setting it explicitly for readability. action sends user to home page-->
+<!--do not need a csrf token bc this is a get function-->
+<input type="text" name="q" placeholder="Search Rooms..." /> <!--type 'text' means you only have to hit enter to search (wherease 'submit' would force the user to click a buttion)-->
+</form>
 <hr>
