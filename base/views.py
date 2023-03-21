@@ -1,5 +1,8 @@
 from django.shortcuts import render, redirect
+from django.contrib import messages #django flash messages (one-time notification messages)
 from django.db.models import Q #lets you add AND/OR statements into the search criteria
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout 
 from .models import Room, Topic
 from .forms import RoomForm
 '''
@@ -15,6 +18,37 @@ rooms = [
     {'id':3, 'name':'DP-900 exam prep'},
 ] 
 '''
+
+
+def loginPage(request): #don't cann this function 'login' if you plan to use the built in login() function (to avoid conflict)
+    
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        #to make sure the user exists:
+        try:
+            user = User.objects.get(username=username)
+        except:
+            #use django one-time notification message:
+            messages.error(request, 'User does not exist. Try different credentials or create a new user.')
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user) #creates a session in the DB and the browser(cookies)
+            return redirect('home')
+        else:
+            messages.error(request, 'Username or password does not exist.')
+
+    context = {}
+    return render(request, 'base/login_register.html', context)
+
+def logoutUser(request):
+    logout(request) #use Django logout function to fix all the stuff for you (wrt session etc.)
+    return redirect('home')
+
+
 
 def home(request):
     q = request.GET.get('q') if request.GET.get('q') != None else '' #q for query hehe. q returs whatever is passed into the url. youtube: 2:13:40 for more

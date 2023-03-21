@@ -7,4 +7,11 @@
 <!--do not need a csrf token bc this is a get function-->
 <input type="text" name="q" placeholder="Search Rooms..." /> <!--type 'text' means you only have to hit enter to search (wherease 'submit' would force the user to click a buttion)-->
 </form>
+
+{% if request.user.is_authenticated %}
+<a href="{% url 'logout' %}">Log out</a>
+{% else %}
+<a href="{% url 'login' %}">Log in</a>
+{% endif %}
+
 <hr>
