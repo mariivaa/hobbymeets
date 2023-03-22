@@ -1,8 +1,11 @@
 from django.shortcuts import render, redirect
+from django.http import HttpResponse
 from django.contrib import messages #django flash messages (one-time notification messages)
+from django.contrib.auth.decorators import login_required #needed to restrict pages to authorized users
 from django.db.models import Q #lets you add AND/OR statements into the search criteria
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout 
+from django.contrib.auth.forms import UserCreationForm 
 from .models import Room, Topic
 from .forms import RoomForm
 '''
@@ -21,9 +24,14 @@ rooms = [
 
 
 def loginPage(request): #don't cann this function 'login' if you plan to use the built in login() function (to avoid conflict)
-    
+    page = 'login'
+
+    #check if user is already logged in:
+    if request.user.is_authenticated:
+        return redirect('home')
+
     if request.method == 'POST':
-        username = request.POST.get('username')
+        username = request.POST.get('username').lower()
         password = request.POST.get('password')
 
         #to make sure the user exists:
@@ -41,13 +49,29 @@ def loginPage(request): #don't cann this function 'login' if you plan to use the
         else:
             messages.error(request, 'Username or password does not exist.')
 
-    context = {}
+    context = {'page': page}
     return render(request, 'base/login_register.html', context)
 
 def logoutUser(request):
     logout(request) #use Django logout function to fix all the stuff for you (wrt session etc.)
     return redirect('home')
 
+
+def registerPage(request):
+    form = UserCreationForm()
+
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST) #param request.POST means passing in all credentials such as name, password, etc.
+        if form.is_valid():
+            user = form.save(commit=False) #need to set commit=False in order to access the user object
+            user.username = user.username.lower() #clean
+            user.save()
+            login(request, user)
+            return redirect('home')
+        else:
+            messages.error(request, 'An error ocurred during registration.')
+
+    return render(request, 'base/login_register.html', {'form': form})
 
 
 def home(request):
@@ -70,6 +94,8 @@ def room(request, pk):
     context = {'room' : room}
     return render(request, 'base/room.html', context)
 
+
+@login_required(login_url='login') #redirects unauthorized users to the login page
 def createRoom(request):
     form = RoomForm()
     if request.method == 'POST': 
@@ -81,9 +107,14 @@ def createRoom(request):
     return render(request, 'base/room_form.html', context)
 
 
+@login_required(login_url='login') #redirects unauthorized users to the login page
 def updateRoom(request, pk):
     room = Room.objects.get(id=pk)
     form = RoomForm(instance=room)
+
+    #give feedback to unauthorized users:
+    if request.user != room.host:
+        return HttpResponse('Få dæ vækk ditt håratt spøkels, du e itj vælkommen hær!')
 
     if request.method == 'POST': #follow same principle for this if clause as in createRoom()
         form = RoomForm(request.POST, instance=room)
@@ -94,8 +125,15 @@ def updateRoom(request, pk):
     return render(request, 'base/room_form.html', context)
 
 
+@login_required(login_url='login') #redirects unauthorized users to the login page
 def deleteRoom(request, pk):
     room = Room.objects.get(id=pk)
+
+
+    #give feedback to unauthorized users:
+    if request.user != room.host:
+        return HttpResponse('Få dæ vækk ditt håratt spøkels, du får itj slætta dt hær!')
+
     if request.method == 'POST':
         room.delete()
         return redirect('home')
