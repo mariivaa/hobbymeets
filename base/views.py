@@ -6,7 +6,7 @@ from django.db.models import Q #lets you add AND/OR statements into the search c
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout 
 from django.contrib.auth.forms import UserCreationForm 
-from .models import Room, Topic
+from .models import Room, Topic, Message
 from .forms import RoomForm
 '''
 REQUESTS explained: When a page is requested, Django creates an HttpRequest object that contains metadata about the request. 
@@ -85,13 +85,27 @@ def home(request):
 
     topics = Topic.objects.all()
     room_count = rooms.count() #faster than len() method
+    room_messages = Message.objects.all()
 
-    context = {'rooms': rooms, 'topics': topics, 'room_count': room_count}
+    context = {'rooms': rooms, 'topics': topics, 'room_count': room_count,
+                'room_messages': room_messages}
     return render(request, 'base/home.html', context)
 
 def room(request, pk):
     room = Room.objects.get(id=pk) #the get function looks in the Room model(db) for an id that matches pk. Each model object in Django gets an id autmatically assigned. 
-    context = {'room' : room}
+    room_messages = room.message_set.all().order_by('-created') #since Message model has Room as FK, you can access the Message objects from the related Room through message_set.
+    participants = room.participants.all() #can use participants.all() bc participants has been specified as a related_name in models.
+
+    #add functionality to post a message in a room:
+    if request.method == 'POST':
+        message = Message.objects.create(
+            user=request.user,
+            room=room,
+            body=request.POST.get('body')
+        )
+        room.participants.add(request.user) #adds participant to room when they post something (every single time...?)
+        return redirect('room', pk=room.id)
+    context = {'room' : room, 'room_messages': room_messages, 'participants': participants}
     return render(request, 'base/room.html', context)
 
 
@@ -107,7 +121,7 @@ def createRoom(request):
     return render(request, 'base/room_form.html', context)
 
 
-@login_required(login_url='login') #redirects unauthorized users to the login page
+@login_required(login_url='login') #checks if authorized and redirects unauthorized users to the login page
 def updateRoom(request, pk):
     room = Room.objects.get(id=pk)
     form = RoomForm(instance=room)
@@ -138,3 +152,16 @@ def deleteRoom(request, pk):
         room.delete()
         return redirect('home')
     return render(request, 'base/delete.html', {'obj' : room}) #'obj' refers to the 'obj in delete.html
+
+
+@login_required(login_url='login') 
+def deleteMessage(request, pk):
+    message = Message.objects.get(id=pk)
+    #give feedback to unauthorized users:
+    if request.user != message.user:
+        return HttpResponse('Få dæ vækk ditt håratt spøkels, du får itj slætta dt hær!')
+
+    if request.method == 'POST':
+        message.delete()
+        return redirect('home')
+    return render(request, 'base/delete.html', {'obj' : message})

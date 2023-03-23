@@ -18,7 +18,7 @@ class Room(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField(null=True, blank=True) # null=True doesn't actually do much as explained here: https://stackoverflow.com/questions/8609192/what-is-the-difference-between-null-true-and-blank-true-in-django
                                                         #blank=True -> you can leavve fields blank (not required to fill out)
-    #participants = 
+    participants = models.ManyToManyField(User, related_name='participants', blank=True) #more about related_name on Notion/Stackoverflow. Blank=true means you can submit a form without filling everying out
     updated = models.DateTimeField(auto_now=True) #auto_now takes a snapshot everytime the instance is saved _ Eg. when the room was last updated
     created = models.DateTimeField(auto_now_add=True) #only takes a timestamp when the instance is created - Eg. when the room was created
 
