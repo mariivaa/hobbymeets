@@ -85,7 +85,7 @@ def home(request):
 
     topics = Topic.objects.all()
     room_count = rooms.count() #faster than len() method
-    room_messages = Message.objects.all()
+    room_messages = Message.objects.filter(Q(room__topic__name__icontains=q))
 
     context = {'rooms': rooms, 'topics': topics, 'room_count': room_count,
                 'room_messages': room_messages}
@@ -93,7 +93,7 @@ def home(request):
 
 def room(request, pk):
     room = Room.objects.get(id=pk) #the get function looks in the Room model(db) for an id that matches pk. Each model object in Django gets an id autmatically assigned. 
-    room_messages = room.message_set.all().order_by('-created') #since Message model has Room as FK, you can access the Message objects from the related Room through message_set.
+    room_messages = room.message_set.all() #since Message model has Room as FK, you can access the Message objects from the related Room through message_set.
     participants = room.participants.all() #can use participants.all() bc participants has been specified as a related_name in models.
 
     #add functionality to post a message in a room:

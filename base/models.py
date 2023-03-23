@@ -24,6 +24,7 @@ class Room(models.Model):
 
     class Meta:
         ordering = ['-updated', '-created'] #the dash means descending order, eg. newest updated / created will be first
+    
     def __str__(self):
         return self.name #has to be a string!! so if unsire, wrap the retunred val in a str()
 
@@ -35,6 +36,9 @@ class Message(models.Model):
     body = models.TextField() #leave empty to force users to write message
     updated = models.DateTimeField(auto_now=True) #auto_now takes a snapshot everytime the instance is saved _ Eg. when the room was last updated
     created = models.DateTimeField(auto_now_add=True) #only takes a timestamp when the instance is created - Eg. when the room was created
+
+    class Meta:
+        ordering = ['-updated', '-created'] #the dash means descending order, eg. newest updated / created will be first
 
     def __str__(self):
         return self.body[0:50] #gives you a preview of the first 50 characters
