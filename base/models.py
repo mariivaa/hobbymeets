@@ -27,6 +27,7 @@ class Room(models.Model):
     
     def __str__(self):
         return self.name #has to be a string!! so if unsire, wrap the retunred val in a str()
+        
 
 
 
