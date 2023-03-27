@@ -6,3 +6,4 @@ class RoomForm(ModelForm):
     class Meta:
         model = Room
         fields = '__all__' # create all fields that are specified in the Room model (except for fields that aren't possible to update/change manually, eg. updated/changed)
+        exclude = ['host', 'participants'] #one way to remove some fields from the form. remember to add these values in views.py so that something will be sent to the db

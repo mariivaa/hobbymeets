@@ -122,7 +122,9 @@ def createRoom(request):
     if request.method == 'POST': 
         form = RoomForm(request.POST) # since we use ModelForm for RoomForm (in .forms), we can just pass in all the POST data into the form, and it will know which values to extract
         if form.is_valid():
-            form.save()
+            room = form.save(commit=False)
+            room.host = request.user #add this since it's not specified in the form the user submits
+            room.save()
             return redirect('home') #redirects user to homepage after submitting form
     context = {'form': form}
     return render(request, 'base/room_form.html', context)
