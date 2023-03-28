@@ -119,14 +119,19 @@ def userProfile(request, pk):
 @login_required(login_url='login') #redirects unauthorized users to the login page
 def createRoom(request):
     form = RoomForm()
+    topics = Topic.objects.all()
     if request.method == 'POST': 
-        form = RoomForm(request.POST) # since we use ModelForm for RoomForm (in .forms), we can just pass in all the POST data into the form, and it will know which values to extract
-        if form.is_valid():
-            room = form.save(commit=False)
-            room.host = request.user #add this since it's not specified in the form the user submits
-            room.save()
-            return redirect('home') #redirects user to homepage after submitting form
-    context = {'form': form}
+        topic_name = request.POST.get('topic')
+        topic, created = Topic.objects.get_or_create(name=topic_name)
+
+        Room.objects.create(
+        host=request.user,
+        topic=topic,
+        name=request.POST.get('name'), #name passed from the form (form.name)
+        description=request.POST.get('description')#passed from the form
+        )
+        return redirect('home') #redirects user to homepage after submitting form
+    context = {'form': form, 'topics': topics}
     return render(request, 'base/room_form.html', context)
 
 
@@ -134,17 +139,20 @@ def createRoom(request):
 def updateRoom(request, pk):
     room = Room.objects.get(id=pk)
     form = RoomForm(instance=room)
-
+    topics = Topic.objects.all()
     #give feedback to unauthorized users:
     if request.user != room.host:
         return HttpResponse('Få dæ vækk ditt håratt spøkels, du e itj vælkommen hær!')
 
     if request.method == 'POST': #follow same principle for this if clause as in createRoom()
-        form = RoomForm(request.POST, instance=room)
-        if form.is_valid():
-            form.save()
-            return redirect('home')
-    context = {'form' : form}
+        topic_name = request.POST.get('topic')
+        topic, created = Topic.objects.get_or_create(name=topic_name)
+        room.name = request.POST.get('name')
+        room.topic = topic
+        room.description = request.POST.get('description')
+        room.save()
+        return redirect('home')
+    context = {'form': form, 'topics': topics, 'room': room}
     return render(request, 'base/room_form.html', context)
 
 
