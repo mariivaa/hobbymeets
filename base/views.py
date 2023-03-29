@@ -180,7 +180,7 @@ def deleteMessage(request, pk):
 
     if request.method == 'POST':
         message.delete()
-        return redirect('home')
+        return redirect('home') #TODO: send users back to prev page
     return render(request, 'base/delete.html', {'obj' : message})
 
 

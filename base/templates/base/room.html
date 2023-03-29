@@ -87,7 +87,7 @@
                         <div class="avatar avatar--small">
                           <img src="https://randomuser.me/api/portraits/men/37.jpg" />
                         </div>
-                        <span>@{{message.user.username}}</span>
+                        <span>@{{message.user.username}}</span> <!--TODO: fix so that messages are displayed in chrono order, with most recent ones closest to the input text field-->
                       </a>
                       <span class="thread__date">{{message.created|timesince}} ago</span>
                     </div>
@@ -113,7 +113,9 @@
             </div>
           </div>
           <div class="room__message">
-            <form action="#"><input name="" placeholder="Write your message here..." /></form>
+            <form method="POST">
+              {% csrf_token %}
+              <input name="body" placeholder="Write your message here..." /></form>
           </div>
         </div>
         <!-- Room End -->

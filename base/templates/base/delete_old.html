@@ -1,0 +1,15 @@
+<!--dynamic template for all deletes-->
+{% extends 'main.html' %}
+
+{% block content %}
+
+<form method="POST" action="">
+    {% csrf_token %} <!--will be sent on every form submitted(?) -helps with security attacks and stuff:)))-->
+    <p>Are you sure you want to delete "{{obj}}"?</p> <!--Can reference the obj in the views-->
+    <a href="{{request.META.HTTP_REFERER}}">Go Back</a> <!--sends user back to previous page when clicking Go Back-->
+    <input type="submit" value="Confirm" />
+</form>
+
+
+
+{% endblock content %}
