@@ -82,7 +82,7 @@ def home(request):
         Q(name__icontains=q) | #topic__name, name, description are all keywords of filter, not of Room model. topic__name is a composite keyword that goes into the parent function   
         Q(description__icontains=q)
         )  
-    topics = Topic.objects.all() #TODO: fix this so that the most popular topics appear first?
+    topics = Topic.objects.all()[0:5] #TODO: fix this so that the most popular topics appear first?
     room_count = rooms.count() #faster than len() method
     room_messages = Message.objects.filter(Q(room__topic__name__icontains=q))
 
@@ -197,3 +197,13 @@ def updateUser(request):
             return redirect('user-profile', pk=user.id)
 
     return render(request, 'base/update_user.html', {'form': form})
+
+def topicsPage(request):
+    q = request.GET.get('q') if request.GET.get('q') != None else ''
+    topics  =Topic.objects.filter(name__icontains=q)
+    return render(request, 'base/topics.html', {'topics': topics})
+
+
+def activityPage(request):
+    room_messages = Message.objects.all()
+    return render(request, 'base/activity.html', {'room_messages': room_messages})
