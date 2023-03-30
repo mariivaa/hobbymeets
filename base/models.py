@@ -10,7 +10,7 @@ class User(AbstractUser):
     email = models.EmailField(unique=True, null=True)
     bio = models.TextField(null=True)
 
-    avatar = models.ImageField(null=True, default="avatar.svg")
+    avatar = models.ImageField(null=True, default="avatar.svg") #TODO: fix the avatar to be something more fun, ideally a few that are randomly assigned
 
     USERNAME_FIELD = 'email' # override orig. User and set email as login info
     REQUIRED_FIELDS = []

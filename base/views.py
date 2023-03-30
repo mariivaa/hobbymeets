@@ -4,9 +4,8 @@ from django.contrib import messages #django flash messages (one-time notificatio
 from django.contrib.auth.decorators import login_required #needed to restrict pages to authorized users
 from django.db.models import Q #lets you add AND/OR statements into the search criteria
 from django.contrib.auth import authenticate, login, logout 
-from django.contrib.auth.forms import UserCreationForm 
 from .models import Room, Topic, Message, User
-from .forms import RoomForm, UserForm
+from .forms import RoomForm, UserForm, MyUserCreationForm
 '''
 REQUESTS explained: When a page is requested, Django creates an HttpRequest object that contains metadata about the request. 
 Then Django loads the appropriate view, passing the HttpRequest as the first argument to the view function. 
@@ -30,23 +29,23 @@ def loginPage(request): #don't cann this function 'login' if you plan to use the
         return redirect('home')
 
     if request.method == 'POST':
-        username = request.POST.get('username').lower()
+        email = request.POST.get('email').lower()
         password = request.POST.get('password')
 
         #to make sure the user exists:
         try:
-            user = User.objects.get(username=username)
+            user = User.objects.get(email=email)
         except:
             #use django one-time notification message:
             messages.error(request, 'User does not exist. Try different credentials or create a new user.')
 
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, email=email, password=password)
 
         if user is not None:
             login(request, user) #creates a session in the DB and the browser(cookies)
             return redirect('home')
         else:
-            messages.error(request, 'Username or password does not exist.')
+            messages.error(request, 'Email or password does not exist.')
 
     context = {'page': page}
     return render(request, 'base/login_register.html', context)
@@ -57,10 +56,10 @@ def logoutUser(request):
 
 
 def registerPage(request):
-    form = UserCreationForm()
+    form = MyUserCreationForm()
 
     if request.method == 'POST':
-        form = UserCreationForm(request.POST) #param request.POST means passing in all credentials such as name, password, etc.
+        form = MyUserCreationForm(request.POST) #param request.POST means passing in all credentials such as name, password, etc.
         if form.is_valid():
             user = form.save(commit=False) #need to set commit=False in order to access the user object
             user.username = user.username.lower() #clean
@@ -121,7 +120,7 @@ def createRoom(request):
     topics = Topic.objects.all()
     if request.method == 'POST': 
         topic_name = request.POST.get('topic')
-        topic, created = Topic.objects.get_or_create(name=topic_name)
+        topic, created = Topic.objects.get_or_create(name=topic_name) #figure out why you even need created??
 
         Room.objects.create(
         host=request.user,
@@ -190,7 +189,7 @@ def updateUser(request):
     form = UserForm(instance=user)
 
     if request.method == 'POST':
-        form = UserForm(request.POST, instance=user)
+        form = UserForm(request.POST, request.FILES, instance=user) #request.FILES lets us process files (eg.imgs), not just simple datatypes
         if form.is_valid():
             form.save()
             return redirect('user-profile', pk=user.id)
