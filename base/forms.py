@@ -1,6 +1,5 @@
 from django.forms import ModelForm #"Kind of like a class-based representation of a form" - does some of the work for ya
-from .models import Room
-from django.contrib.auth.models import User
+from .models import Room, User
 
 
 class RoomForm(ModelForm):

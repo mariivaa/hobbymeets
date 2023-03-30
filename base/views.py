@@ -3,10 +3,9 @@ from django.http import HttpResponse
 from django.contrib import messages #django flash messages (one-time notification messages)
 from django.contrib.auth.decorators import login_required #needed to restrict pages to authorized users
 from django.db.models import Q #lets you add AND/OR statements into the search criteria
-from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout 
 from django.contrib.auth.forms import UserCreationForm 
-from .models import Room, Topic, Message
+from .models import Room, Topic, Message, User
 from .forms import RoomForm, UserForm
 '''
 REQUESTS explained: When a page is requested, Django creates an HttpRequest object that contains metadata about the request. 

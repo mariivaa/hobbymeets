@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'base.apps.BaseConfig', #added this one manually after creating base
 ]
 
+AUTH_USER_MODEL = 'base.User'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -124,11 +126,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
+MEDIA_URL = '/images/'
 
 #Add this so that Django knows that the static folder exists
 STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
+
+MEDIA_ROOT = BASE_DIR / 'static/images' #ok for dev, not really suitable for production(then you'd typically upload directly to cloud or smomething)
 
 #For stuff users want to upload to the website(primarily pics in our case):
 #STATIC_ROOT = 
