@@ -80,17 +80,19 @@ def home(request):
         Q(name__icontains=q) | #topic__name, name, description are all keywords of filter, not of Room model. topic__name is a composite keyword that goes into the parent function   
         Q(description__icontains=q)
         )  
-    topics = Topic.objects.all()[0:5] #TODO: fix this so that the most popular topics appear first?
+    topics = Topic.objects.all()#TODO: fix this so that the most popular topics appear first? Also, [0:5] at the end only retrieves first 5
+    top_topics = Topic.objects.all()[0:5] #lazy way of making this work in the template:))
     room_count = rooms.count() #faster than len() method
+    total_room_count = Room.objects.all().count()
     room_messages = Message.objects.filter(Q(room__topic__name__icontains=q))
 
-    context = {'rooms': rooms, 'topics': topics, 'room_count': room_count,
-                'room_messages': room_messages}
+    context = {'rooms': rooms, 'topics': topics, 'top_topics': top_topics, 'room_count': room_count,
+                'room_messages': room_messages, 'total_room_count': total_room_count}
     return render(request, 'base/home.html', context)
 
 def room(request, pk):
     room = Room.objects.get(id=pk) #the get function looks in the Room model(db) for an id that matches pk. Each model object in Django gets an id autmatically assigned. 
-    room_messages = room.message_set.all() #since Message model has Room as FK, you can access the Message objects from the related Room through message_set.
+    room_messages = room.message_set.all().order_by('created') #since Message model has Room as FK, you can access the Message objects from the related Room through message_set.
     participants = room.participants.all() #can use participants.all() bc participants has been specified as a related_name in models.
 
     #add functionality to post a message in a room:

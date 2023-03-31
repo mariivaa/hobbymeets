@@ -50,7 +50,7 @@ class Message(models.Model):
     created = models.DateTimeField(auto_now_add=True) #only takes a timestamp when the instance is created - Eg. when the room was created
 
     class Meta:
-        ordering = ['-updated', '-created'] #the dash means descending order, eg. newest updated / created will be first
+        ordering = ['-created'] #the dash means descending order, eg. newest updated / created will be first
 
     def __str__(self):
         return self.body[0:50] #gives you a preview of the first 50 characters
