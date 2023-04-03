@@ -75,11 +75,11 @@
               <div class="room__details">
                 {{room.description}}
               </div>
-              <span class="room__topics">{{room.topic}}</span>
+              <a href="{% url 'home' %}?q={{room.topic.name}}"><span class="room__topics">{{room.topic}}</span></a>
             </div>
             <div class="room__conversation">
               <div class="threads scroll">
-                {% for message in room_messages%} <!--room_message var from room view-->
+                {% for message in room_messages %} <!--room_message var from room view-->
                 <div class="thread">
                   <div class="thread__top">
                     <div class="thread__author">

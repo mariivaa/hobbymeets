@@ -80,14 +80,11 @@ def home(request):
         Q(name__icontains=q) | #topic__name, name, description are all keywords of filter, not of Room model. topic__name is a composite keyword that goes into the parent function   
         Q(description__icontains=q)
         )  
-    topics = Topic.objects.all()#TODO: fix this so that the most popular topics appear first? Also, [0:5] at the end only retrieves first 5
-    top_topics = Topic.objects.all()[0:5] #lazy way of making this work in the template:))
     room_count = rooms.count() #faster than len() method
-    total_room_count = Room.objects.all().count()
     room_messages = Message.objects.filter(Q(room__topic__name__icontains=q))
 
-    context = {'rooms': rooms, 'topics': topics, 'top_topics': top_topics, 'room_count': room_count,
-                'room_messages': room_messages, 'total_room_count': total_room_count}
+    context = {'rooms': rooms, 'room_count': room_count,
+                'room_messages': room_messages}
     return render(request, 'base/home.html', context)
 
 def room(request, pk):
@@ -112,14 +109,12 @@ def userProfile(request, pk):
     user = User.objects.get(id=pk)
     rooms = user.room_set.all() #_set gets relevant rooms through reverse relation from user intance
     room_messages = user.message_set.all()
-    topics =  Topic.objects.all()
-    context = {'user': user, 'rooms': rooms, 'room_messages': room_messages, 'topics': topics}
+    context = {'user': user, 'rooms': rooms, 'room_messages': room_messages}
     return render(request, 'base/profile.html', context)
 
 @login_required(login_url='login') #redirects unauthorized users to the login page
 def createRoom(request):
     form = RoomForm()
-    topics = Topic.objects.all()
     if request.method == 'POST': 
         topic_name = request.POST.get('topic')
         topic, created = Topic.objects.get_or_create(name=topic_name) #figure out why you even need created??
@@ -131,7 +126,7 @@ def createRoom(request):
         description=request.POST.get('description')#passed from the form
         )
         return redirect('home') #redirects user to homepage after submitting form
-    context = {'form': form, 'topics': topics}
+    context = {'form': form}
     return render(request, 'base/room_form.html', context)
 
 
@@ -139,7 +134,6 @@ def createRoom(request):
 def updateRoom(request, pk):
     room = Room.objects.get(id=pk)
     form = RoomForm(instance=room)
-    topics = Topic.objects.all()
     #give feedback to unauthorized users:
     if request.user != room.host:
         return HttpResponse('Få dæ vækk ditt håratt spøkels, du e itj vælkommen hær!')
@@ -152,7 +146,7 @@ def updateRoom(request, pk):
         room.description = request.POST.get('description')
         room.save()
         return redirect('home')
-    context = {'form': form, 'topics': topics, 'room': room}
+    context = {'form': form, 'room': room}
     return render(request, 'base/room_form.html', context)
 
 
@@ -200,7 +194,7 @@ def updateUser(request):
 
 def topicsPage(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
-    topics  =Topic.objects.filter(name__icontains=q)
+    topics = Topic.objects.filter(name__icontains=q)
     return render(request, 'base/topics.html', {'topics': topics})
 
 

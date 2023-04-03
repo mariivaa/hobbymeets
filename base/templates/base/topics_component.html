@@ -1,10 +1,11 @@
+
 <div class="topics">
     <div class="topics__header">
-      <h2>Browse Topics <span>({{topics.count}})</span></h2>
+      <h2>Browse Rooms by Topic <span>({{topics.count}})</span></h2>
     </div>
     <ul class="topics__list">
       <li>
-        <a href="/" class="active">All <span>{{total_room_count}}</span></a> <!--TODO: change this to room_count? (but then you have to fix the bug where it changes depending on what you click on, eg. profile page, topic, etc.) -->
+        <a href="/" class="active">All rooms <span>{{total_room_count}}</span></a> 
       </li>
       {% for topic in top_topics %} <!--loop through the top topics and add each topic w/link to sidebar.--> <!--TODO: figure out if you can just loop through all topics and make the for loop conditional to top five:)))-->
       <li>
