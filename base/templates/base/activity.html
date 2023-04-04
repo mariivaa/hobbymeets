@@ -1,10 +1,10 @@
 {% extends 'main.html' %}
-
+<!--TODO: fix issue where header with arrow doesn't show and keeps overlapping with navbar bc the activity container just maxes out up n down.-->
 {% block content %}
     <main class="layout">
       <div class="container">
         <div class="layout__box">
-          <div class="layout__boxHeader"> <!--TODO: add back button to header-->
+          <div class="layout__boxHeader"> 
             <div class="layout__boxTitle">
               <a href="{% url 'home' %}">
                 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
@@ -28,7 +28,7 @@
                   <img src="{{message.user.avatar.url}}" />
                 </div>
                 <p>
-                  @{{message.user}}
+                  @{{message.user.username}}
                   <span>{{message.created|timesince}} ago</span>
                 </p>
               </a>
@@ -49,7 +49,7 @@
             <div class="activities__boxContent">
               <p>replied to post <a href="% url 'room' message.room.id %">{{message.room}}</a></p>
               <div class="activities__boxRoomContent">
-                {{message.body}}
+                {{message.body|truncatechars:100}}
               </div>
             </div>
           </div>

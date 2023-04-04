@@ -25,6 +25,8 @@
   text-rendering: optimizeLegibility;
   /* color: inherit; */
   font-size: inherit;
+  /*FOR DEBUGGING:*/
+  outline: 1px solid red;
 }
 
 html {
@@ -250,6 +252,7 @@ a {
 
 .mobile-menuItems {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: 1rem;
@@ -272,12 +275,14 @@ a {
 
 .header > .container {
   display: flex;
+  flex-wrap: wrap;
   gap: 9.5rem;
 }
 
 .header__logo,
 .header__user {
   display: flex;
+  flex-wrap: wrap;
   gap: 2rem;
   align-items: center;
 }
@@ -297,6 +302,7 @@ a {
   background-color: var(--color-dark-medium);
   padding: 1.3rem 1rem;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 1rem;
   border-radius: 4px;
@@ -346,6 +352,7 @@ a {
 
 .header__menu a {
   display: flex;
+  flex-wrap: wrap;
   gap: 1.5rem;
   align-items: center;
   font-weight: 500;
@@ -395,6 +402,7 @@ a {
 
 .layout > .container {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: flex-start;
 }
@@ -437,12 +445,14 @@ a {
 
 .layout__boxHeader {
   display: flex;
+  flex-wrap: wrap;
   padding: 1.5rem;
   background-color: var(--color-dark-light);
 }
 
 .layout__boxTitle {
   display: flex;
+  flex-wrap: wrap;
   gap: 1.5rem;
   align-items: center;
 }
@@ -485,6 +495,7 @@ a {
 
 .form__split {
   display: flex;
+  flex-wrap: wrap;
   gap: 1.5rem;
 }
 
@@ -572,6 +583,7 @@ a {
 
 .topics__list li a {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   margin-bottom: 3rem;
   font-weight: 500;
@@ -621,6 +633,7 @@ a {
 
 .roomList__header {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2.4rem;
@@ -649,6 +662,7 @@ a {
 
 .roomListRoom__header {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
 }
@@ -843,6 +857,7 @@ a {
   text-align: center;
   margin: 0 auto;
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
 }
 
